@@ -1,0 +1,25 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <title>CHATBOOK | Register</title>  
+    <link rel="stylesheet" href="/static/style.css">  
+</head>  
+<body>  
+    <div class="register-container">  
+        <h1>Create Account</h1>  
+        <form method="POST" action="/register">  
+            <input type="text" name="username" placeholder="Username" required>  
+            <input type="password" name="password" placeholder="Password" required>  
+
+<!-- Add this inside your registration form (below password field) -->  
+<div class="input-box">  
+  <input type="password" name="recovery" placeholder="Recovery Password" required>  
+</div>  
+
+            <button type="submit">Register</button>  
+        </form>  
+        <a href="/">Already have an account? Login</a>  
+    </div>  
+</body>  
+</html>
