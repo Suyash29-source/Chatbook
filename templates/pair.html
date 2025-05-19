@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pair with a User</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .pair-container {
+            max-width: 500px;
+            margin: 80px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .pair-container h2 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: #333;
+        }
+
+        .pair-container input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        .pair-container button {
+            padding: 10px 25px;
+            font-size: 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .pair-container button:hover {
+            background: #0056b3;
+        }
+
+        .recent-section {
+            margin-top: 40px;
+            text-align: left;
+        }
+
+        .recent-section h3 {
+            font-size: 20px;
+            color: #444;
+            margin-bottom: 10px;
+        }
+
+        .recent-user {
+            padding: 12px;
+            background: #f3f3f3;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .recent-user:hover {
+            background: #e0e0e0;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="pair-container">
+        <h2>Search User | CHATBOOK 🕷️</h2>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="error">{{ messages[0] }}</div>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <input type="text" name="target_user" placeholder="Enter username to chat" required>
+            <button type="submit">Connect</button>
+        </form>
+
+        <div class="recent-section">
+            <h3>Recent Connections</h3>
+            {% if recent %}
+                {% for item in recent %}
+                    <div class="recent-user" onclick="goToRoom('{{ item.room }}')">
+                        {{ item.username }}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No recent chats yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function goToRoom(room) {
+            window.location.href = "/chat/" + room;
+        }
+    </script>
+</body>
+</html>
