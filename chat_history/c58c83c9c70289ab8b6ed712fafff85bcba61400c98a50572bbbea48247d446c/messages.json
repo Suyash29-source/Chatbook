@@ -1,0 +1,107 @@
+[
+  {
+    "username": "Suyash",
+    "message": "Hello",
+    "type": "text",
+    "timestamp": "12:31"
+  },
+  {
+    "username": "Jigyasa",
+    "message": "Hello",
+    "type": "text",
+    "timestamp": "12:52"
+  },
+  {
+    "username": "Jigyasa",
+    "message": "Kkrh?",
+    "type": "text",
+    "timestamp": "12:56"
+  },
+  {
+    "username": "Suyash",
+    "message": "Kuch nhi tum batao?",
+    "type": "text",
+    "timestamp": "12:59"
+  },
+  {
+    "username": "Jigyasa",
+    "message": "Samee",
+    "type": "text",
+    "timestamp": "12:59"
+  },
+  {
+    "username": "Suyash",
+    "message": "Picsart_25-03-17_22-58-20-557.jpg",
+    "type": "media",
+    "timestamp": "12:59"
+  },
+  {
+    "username": "Jigyasa",
+    "message": "Picsart_25-03-24_16-43-36-833.jpg",
+    "type": "media",
+    "timestamp": "13:00"
+  },
+  {
+    "username": "Jigyasa",
+    "message": "Bolo",
+    "type": "text",
+    "timestamp": "15:36",
+    "status": "sent"
+  },
+  {
+    "username": "Jigyasa",
+    "message": "Kya kar rahi ho?",
+    "type": "text",
+    "timestamp": "15:37",
+    "status": "sent"
+  },
+  {
+    "username": "Suyash",
+    "message": "Picsart_25-03-20_21-53-28-277.jpg",
+    "type": "media",
+    "timestamp": "22:21",
+    "status": "sent"
+  },
+  {
+    "username": "Suyash",
+    "message": "Picsart_25-03-24_16-57-19-465.jpg",
+    "type": "media",
+    "timestamp": "22:28",
+    "status": "sent"
+  },
+  {
+    "username": "Suyash",
+    "message": "Picsart_25-03-17_22-58-20-557.jpg",
+    "type": "media",
+    "timestamp": "22:47",
+    "status": "sent"
+  },
+  {
+    "username": "Suyash",
+    "message": "stickers/cats/sticker_2.webp",
+    "type": "sticker",
+    "timestamp": "22:47",
+    "status": "sent"
+  },
+  {
+    "username": "Jigyasa",
+    "message": "stickers/cats/sticker_5.webp",
+    "type": "sticker",
+    "timestamp": "09:39",
+    "status": "sent"
+  },
+  {
+    "username": "Jigyasa",
+    "message": "Screenshot_20250408-191959.png",
+    "type": "media",
+    "timestamp": "09:39",
+    "status": "sent"
+  },
+  {
+    "username": "Suyash",
+    "message": "Kkrh?",
+    "type": "text",
+    "timestamp": "14:39",
+    "status": "sent"
+  }
+]
