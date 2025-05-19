@@ -5,10 +5,12 @@ from flask_socketio import SocketIO, join_room, leave_room, emit, disconnect
 import hashlib
 from datetime import datetime
 from flask import jsonify
+import eventlet
+eventlet.monkey_patch()
 
 app = Flask(__name__)
-socketio = SocketIO(app)
-app.secret_key = 'chatbook_endgame_secret'
+app.config['SECRET_KEY'] = 'your_secret_key'
+socketio = SocketIO(app, async_mode='eventlet')
 UPLOAD_FOLDER = 'media'
 USER_DATA_FOLDER = 'user_data'
 STICKERS_FOLDER = 'static/stickers'
