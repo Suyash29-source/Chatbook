@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CHATBOOK | Recover</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="recover-container">
+        <h1>Recover Password</h1>
+        <form method="POST" action="/recover">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="recovery_password" placeholder="Recovery Password" required>
+            <input type="password" name="new_password" placeholder="New Password" required>
+            <button type="submit">Reset Password</button>
+        </form>
+        <a href="/">Back to Login</a>
+    </div>
+</body>
+</html>
