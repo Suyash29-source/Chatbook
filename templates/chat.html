@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - {{ username }}</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            background: #111;
+            color: #fff;
+        }
+        h2 {
+            text-align: center;
+            padding: 10px;
+            background: #222;
+            margin: 0;
+        }
+        .chatroom {
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+        }
+        #chat-box {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        .message {
+            margin: 5px 0;
+            padding: 8px;
+            border-radius: 8px;
+            max-width: 70%;
+            background: #333;
+        }
+        .you {
+            background: #007bff;
+            margin-left: auto;
+        }
+        .meta {
+            font-size: 0.7em;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+        .text {
+            font-size: 1em;
+        }
+        .media {
+            max-width: 200px;
+            border-radius: 10px;
+        }
+        #chat-form {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #222;
+        }
+        #message {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            margin-right: 10px;
+            outline: none;
+        }
+        #submit {
+            padding: 10px 20px;
+            background: #28a745;
+            border: none;
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        #plus-icon {
+            background: #444;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            margin-right: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        #media-input, #sticker-input {
+            display: none;
+        }
+        .options-panel {
+            display: none;
+            flex-wrap: wrap;
+            padding: 10px;
+            background: #1a1a1a;
+        }
+        .sticker-preview {
+            width: 60px;
+            height: 60px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        #typing {
+            font-size: 0.8em;
+            padding-left: 15px;
+            color: #bbb;
+        }
+        .status {
+            font-size: 0.6em;
+            color: #ccc;
+            float: right;
+        }
+        .user-status {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-left: 10px;
+}
+.status-dot.online {
+    background-color: limegreen;
+}
+.status-dot.offline {
+    background-color: red;
+}
+    </style>
+</head>
+<body>
+<h2>CHATBOOK 🕷️ </h2>
+
+<div class="user-status">
+    <span id="user-name">{{ username }}</span>
+    <span id="status-dot" class="status-dot offline"></span>
+</div>
+    <div class="chatroom">  
+        <div id="chat-box">  
+            {% for msg in messages %}  
+                <div class="message {% if msg.username == username %}you{% endif %}">  
+                    <div class="meta">{{ msg.username }} • {{ msg.timestamp }}<span class="status">{% if msg.status %}{{ msg.status }}{% endif %}</span></div>  
+                    {% if msg.type == 'media' %}  
+                        <img src="/media/{{ room }}/{{ msg.message }}" class="media" alt="media">  
+                    {% elif msg.type == 'sticker' %}  
+                        <img src="/static/assets/{{ msg.message }}" class="sticker-preview">  
+                    {% else %}  
+                        <div class="text">{{ msg.message }}</div>  
+                    {% endif %}  
+                </div>  
+            {% endfor %}  
+        </div>  
+  
+        <div id="typing"></div>  
+  
+        <form id="chat-form">  
+            <label id="plus-icon">+</label>  
+            <input type="file" id="media-input" accept="image/*">  
+            <input type="text" id="message" placeholder="Type your message..." autocomplete="off">  
+            <button type="submit" id="submit">Send</button>  
+        </form>  
+  
+        <div class="options-panel" id="options-panel">  
+    <button id="media-btn" style="margin: 5px; padding: 8px; background: #444; color: white; border: none; border-radius: 10px; cursor: pointer;">Send Media</button>  
+    <button id="sticker-btn" style="margin: 5px; padding: 8px; background: #444; color: white; border: none; border-radius: 10px; cursor: pointer;">Send Sticker</button>  
+</div>  
+  
+<div class="options-panel" id="sticker-packs" style="display:none;">  
+    {% for pack in sticker_packs %}
+        <button class="sticker-pack" data-pack="{{ pack }}">{{ pack.capitalize() }}</button>
+    {% endfor %}
+</div>
+  
+<div class="options-panel" id="sticker-gallery" style="display:none;">  
+    <!-- Sticker Images will load here dynamically -->  
+</div>  
+    </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>  
+<script>  
+    const username = "{{ username }}";  
+    const room = "{{ room }}";  
+    const socket = io();  
+  
+    socket.emit('join', { username, room });  
+  
+    const chatBox = document.getElementById('chat-box');  
+    const chatForm = document.getElementById('chat-form');  
+    const messageInput = document.getElementById('message');  
+    const mediaInput = document.getElementById('media-input');  
+    const plusIcon = document.getElementById('plus-icon');  
+    const optionsPanel = document.getElementById('options-panel');  
+    const typingDiv = document.getElementById('typing');  
+  
+    function appendMessage(data) {  
+        const div = document.createElement('div');  
+        div.classList.add('message');  
+        if (data.username === username) div.classList.add('you');  
+        div.innerHTML = `<div class="meta">${data.username} • ${data.timestamp}<span class="status">${data.status || ''}</span></div>`;  
+  
+        if (data.type === 'media') {  
+            div.innerHTML += `<img src="/media/${room}/${data.message}" class="media" alt="media">`;  
+        } else if (data.type === 'sticker') {  
+            div.innerHTML += `<img src="/static/assets/${data.message}" class="sticker-preview">`;  
+        } else {  
+            div.innerHTML += `<div class="text">${data.message}</div>`;  
+        }  
+  
+        chatBox.appendChild(div);  
+        chatBox.scrollTop = chatBox.scrollHeight;  
+    }  
+  
+    socket.on('new_message', (data) => {  
+        appendMessage(data);  
+    });  
+  
+    socket.on('typing', (data) => {  
+        typingDiv.innerText = `${data.username} is typing...`;  
+        clearTimeout(typingDiv.timeout);  
+        typingDiv.timeout = setTimeout(() => typingDiv.innerText = '', 2000);  
+    });  
+  
+    messageInput.addEventListener('input', () => {  
+        socket.emit('typing', { username, room });  
+    });  
+  
+    chatForm.addEventListener('submit', (e) => {  
+        e.preventDefault();  
+        const message = messageInput.value.trim();  
+        if (message) {  
+            socket.emit('send_message', { username, room, message });  
+            messageInput.value = '';  
+        }  
+    });  
+  
+    mediaInput.addEventListener('change', () => {  
+        const file = mediaInput.files[0];  
+        if (!file) return;  
+        const reader = new FileReader();  
+        reader.onload = function(e) {  
+            const data = e.target.result;  
+            socket.emit('send_media', {  
+                username,  
+                room,  
+                filename: file.name,  
+                file: data.split(',')[1]  // base64  
+            });  
+        };  
+        reader.readAsDataURL(file);  
+    });  
+  
+const mediaBtn = document.getElementById('media-btn');  
+const stickerBtn = document.getElementById('sticker-btn');  
+const stickerPacks = document.getElementById('sticker-packs');  
+const stickerGallery = document.getElementById('sticker-gallery');  
+  
+// Plus icon opens first option panel  
+plusIcon.addEventListener('click', () => {  
+    optionsPanel.style.display = optionsPanel.style.display === 'flex' ? 'none' : 'flex';  
+    stickerPacks.style.display = 'none';  
+    stickerGallery.style.display = 'none';  
+});  
+  
+// Media button click  
+mediaBtn.addEventListener('click', () => {  
+    mediaInput.click();  
+    optionsPanel.style.display = 'none';  
+});  
+  
+// Sticker button click  
+stickerBtn.addEventListener('click', () => {  
+    optionsPanel.style.display = 'none';  
+    stickerPacks.style.display = 'flex';  
+    stickerGallery.style.display = 'none';  
+});  
+  
+// Show stickers of selected pack  
+document.querySelectorAll('.sticker-pack').forEach(btn => {  
+    btn.addEventListener('click', () => {  
+        const pack = btn.dataset.pack;  
+        stickerGallery.innerHTML = '';  
+        for (let i = 1; i <= 40; i++) {  
+            const img = document.createElement('img');  
+            img.src = `/static/assets/stickers/${pack}/sticker_${i}.webp`;  
+            img.className = 'sticker-preview';  
+            img.dataset.path = `${pack}/sticker_${i}.webp`;  
+            stickerGallery.appendChild(img);  
+        }  
+        stickerGallery.style.display = 'flex';  
+        stickerPacks.style.display = 'none';  
+    });  
+});  
+      
+// Fetch and display sticker packs  
+fetch('/get_sticker_packs')  
+  .then(res => res.json())  
+  .then(packs => {  
+      const stickerPacksContainer = document.getElementById('sticker-packs');  
+      stickerPacksContainer.innerHTML = '';  // Clear existing hardcoded packs  
+  
+      packs.forEach(pack => {  
+          const btn = document.createElement('button');  
+          btn.className = 'sticker-pack';  
+          btn.dataset.pack = pack;  
+          btn.innerText = pack.charAt(0).toUpperCase() + pack.slice(1);  
+          stickerPacksContainer.appendChild(btn);  
+      });  
+  
+      // After adding dynamic packs, attach click event  
+      document.querySelectorAll('.sticker-pack').forEach(btn => {  
+          btn.addEventListener('click', () => {  
+              const packName = btn.dataset.pack;  
+              fetch(`/static/assets/stickers/${packName}/index.json`)  
+                .then(res => res.json())  
+                .then(stickers => {  
+                    stickerGallery.innerHTML = '';  
+                    stickerGallery.style.display = 'flex';  
+                    stickers.forEach(sticker => {  
+                        const img = document.createElement('img');  
+                        img.src = `/static/assets/stickers/${packName}/${sticker}`;  
+                        img.className = 'sticker-preview';  
+                        img.addEventListener('click', () => {  
+    socket.emit('send_sticker', {  
+        username,  
+        room,  
+        message: `stickers/${packName}/${sticker}`  
+    });  
+    stickerGallery.style.display = 'none';  
+});  
+                        stickerGallery.appendChild(img);  
+                    });  
+                });  
+          });  
+      });  
+  });  
+</script>
+<script src="{{ url_for('static', filename='script_phase9.js') }}"></script>
+</body>
+</html>
